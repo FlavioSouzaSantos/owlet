@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,15 +33,11 @@ public class NotifyServiceFallDiscordWebhookConfigPropertyTest {
     @Test
     void shouldLoadConfigs(){
         var properties = new Properties();
-        properties.setProperty("notify.service.fall.discord.webhook.urlTemplate", "localhost");
-        properties.setProperty("notify.service.fall.discord.webhook.id", "123456");
-        properties.setProperty("notify.service.fall.discord.webhook.token", "xydgztdh4hj7");
+        properties.setProperty("notify.service.fall.discord.webhook.url", "localhost");
         properties.setProperty("notify.service.fall.discord.webhook.messageTemplate", "Service is fall.");
 
         var notifyServiceFallDiscordWebhookConfig = configService.loadConfigNotifyServiceFallProperties(properties);
-        assertEquals(notifyServiceFallDiscordWebhookConfig.getUrlTemplate(), "localhost");
-        assertEquals(notifyServiceFallDiscordWebhookConfig.getId(), "123456");
-        assertEquals(notifyServiceFallDiscordWebhookConfig.getToken(), "xydgztdh4hj7");
+        assertEquals(notifyServiceFallDiscordWebhookConfig.getUrl(), URI.create("localhost"));
         assertEquals(notifyServiceFallDiscordWebhookConfig.getMessageTemplate(), "Service is fall.");
     }
 
@@ -58,9 +55,7 @@ public class NotifyServiceFallDiscordWebhookConfigPropertyTest {
         var notifyServiceFallDiscordWebhookConfig =  new NotifyServiceFallDiscordWebhookConfig();
         assertThrows(ConfigException.class, () -> configService.checkRequiredFields(notifyServiceFallDiscordWebhookConfig));
 
-        notifyServiceFallDiscordWebhookConfig.setUrlTemplate("localhost");
-        notifyServiceFallDiscordWebhookConfig.setId("123");
-        notifyServiceFallDiscordWebhookConfig.setToken("789456123");
+        notifyServiceFallDiscordWebhookConfig.setUrl(URI.create("localhost"));
         notifyServiceFallDiscordWebhookConfig.setMessageTemplate("Service is fall.");
         assertDoesNotThrow(() -> configService.checkRequiredFields(notifyServiceFallDiscordWebhookConfig));
     }

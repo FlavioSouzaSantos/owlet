@@ -34,12 +34,8 @@ public class ConfigService {
     }
 
     public void checkRequiredFields(final NotifyServiceFallDiscordWebhookConfig notifyServiceFallDiscordWebhookConfig) {
-        if(notifyServiceFallDiscordWebhookConfig.getUrlTemplate() == null || notifyServiceFallDiscordWebhookConfig.getUrlTemplate().isBlank())
+        if(notifyServiceFallDiscordWebhookConfig.getUrl() == null)
             throw new ConfigException("The URL template not found.");
-        if(notifyServiceFallDiscordWebhookConfig.getId() == null || notifyServiceFallDiscordWebhookConfig.getId().isBlank())
-            throw new ConfigException("The webhook ID not found.");
-        if(notifyServiceFallDiscordWebhookConfig.getToken() == null || notifyServiceFallDiscordWebhookConfig.getToken().isBlank())
-            throw new ConfigException("The webhook token not found.");
         if(notifyServiceFallDiscordWebhookConfig.getMessageTemplate() == null || notifyServiceFallDiscordWebhookConfig.getMessageTemplate().isBlank())
             throw new ConfigException("The message template not found.");
     }

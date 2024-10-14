@@ -4,20 +4,19 @@ import br.com.flavio.owlet.exceptions.NotifyException;
 import br.com.flavio.owlet.model.HttpMethod;
 import br.com.flavio.owlet.model.NotifyServiceFallDiscordWebhookConfig;
 import br.com.flavio.owlet.model.ServiceEvent;
+import com.google.gson.Gson;
 
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class NotifyFallDiscordWebhookListener implements ServiceFallListener {
 
     private final NotifyServiceFallDiscordWebhookConfig config;
+    private final Gson gson = new Gson();
 
     public NotifyFallDiscordWebhookListener(NotifyServiceFallDiscordWebhookConfig config) {
         this.config = config;
@@ -26,14 +25,12 @@ public class NotifyFallDiscordWebhookListener implements ServiceFallListener {
     @Override
     public synchronized void onFall(ServiceEvent event) {
         try (var client = HttpClient.newHttpClient()){
-            var formParam = config.createFormParam(config.createMessage(event));
-            var stringBody = convertMapFormParamToStringFormParam(formParam);
-
-            var bodyPublisher = HttpRequest.BodyPublishers.ofString(stringBody);
+            var discordWebhookMessage = config.createDiscordWebhookMessage(config.createMessage(event));
+            var bodyPublisher = HttpRequest.BodyPublishers.ofString(gson.toJson(discordWebhookMessage));
 
             var requestBuilder = HttpRequest.newBuilder()
-                    .uri(config.createUrl())
-                    .header("content-type", "multipart/form-data")
+                    .uri(config.getUrl())
+                    .header("content-type", "application/json")
                     .method(HttpMethod.POST.name(), bodyPublisher)
                     .timeout(Duration.of(10, SECONDS));
 
@@ -44,18 +41,5 @@ public class NotifyFallDiscordWebhookListener implements ServiceFallListener {
         }catch (Exception ex){
             throw new NotifyException(ex.getMessage(), ex);
         }
-    }
-
-    private String convertMapFormParamToStringFormParam(Map<String, Object> param) {
-        StringBuilder formBodyBuilder = new StringBuilder();
-        for (Map.Entry<String, Object> singleEntry : param.entrySet()) {
-            if (formBodyBuilder.length() > 0) {
-                formBodyBuilder.append("&");
-            }
-            formBodyBuilder.append(URLEncoder.encode(singleEntry.getKey(), StandardCharsets.UTF_8));
-            formBodyBuilder.append("=");
-            formBodyBuilder.append(URLEncoder.encode(singleEntry.getValue().toString(), StandardCharsets.UTF_8));
-        }
-        return formBodyBuilder.toString();
     }
 }

@@ -1,10 +1,7 @@
 package br.com.flavio.owlet;
 
 import br.com.flavio.owlet.listeners.NotifyFallDiscordWebhookListener;
-import br.com.flavio.owlet.model.ClientServiceConfig;
-import br.com.flavio.owlet.model.HttpMethod;
-import br.com.flavio.owlet.model.NotifyServiceFallDiscordWebhookConfig;
-import br.com.flavio.owlet.model.ServiceEvent;
+import br.com.flavio.owlet.model.*;
 import br.com.flavio.owlet.services.CheckEndpointService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,37 +69,6 @@ public class NotifyFallDiscordWebhookListenerTest {
     }
 
     @Test
-    void shouldCreateUrlWebhook() {
-        var notifyServiceFallDiscordWebhookConfig = new NotifyServiceFallDiscordWebhookConfig();
-        notifyServiceFallDiscordWebhookConfig.setUrlTemplate("https://discord.com/webhook/{webhook.id}/{webhook.token}");
-        notifyServiceFallDiscordWebhookConfig.setId("123");
-        notifyServiceFallDiscordWebhookConfig.setToken("a123b456c789");
-
-        assertEquals(URI.create("https://discord.com/webhook/123/a123b456c789"),
-                notifyServiceFallDiscordWebhookConfig.createUrl());
-
-        notifyServiceFallDiscordWebhookConfig.setUrlTemplate("https://discord.com/webhook");
-        assertEquals(URI.create("https://discord.com/webhook"),
-                notifyServiceFallDiscordWebhookConfig.createUrl());
-    }
-
-    @Test
-    void shouldNotCreateUrlWebhook() {
-        var notifyServiceFallDiscordWebhookConfig = new NotifyServiceFallDiscordWebhookConfig();
-
-        assertNull(notifyServiceFallDiscordWebhookConfig.createUrl());
-
-        notifyServiceFallDiscordWebhookConfig.setUrlTemplate("https://discord.com/webhook/{webhook.id}/{webhook.token}");
-        assertNull(notifyServiceFallDiscordWebhookConfig.createUrl());
-
-        notifyServiceFallDiscordWebhookConfig.setId("123");
-        assertNull(notifyServiceFallDiscordWebhookConfig.createUrl());
-
-        notifyServiceFallDiscordWebhookConfig.setToken("123456");
-        assertNotNull(notifyServiceFallDiscordWebhookConfig.createUrl());
-    }
-
-    @Test
     void shouldCreateMessage() {
         var time = LocalDateTime.of(2024, Month.JANUARY, 1, 0, 0, 0, 0);
 
@@ -115,11 +80,10 @@ public class NotifyFallDiscordWebhookListenerTest {
     }
 
     @Test
-    void shouldCreateFormParam() {
+    void shouldCreateWebhookMessage() {
         var message = "The service Google search of the application Google fell in 2024-01-01T00:00:00.";
         var notifyServiceFallDiscordWebhookConfig = new NotifyServiceFallDiscordWebhookConfig();
-        var formParam = new HashMap<String, Object>();
-        formParam.put("content", message);
-        assertEquals(formParam, notifyServiceFallDiscordWebhookConfig.createFormParam(message));
+        var formParam = new DiscordWebhookMessage(null, null, message);
+        assertEquals(formParam, notifyServiceFallDiscordWebhookConfig.createDiscordWebhookMessage(message));
     }
 }

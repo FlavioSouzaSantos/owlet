@@ -6,25 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @PrefixProperty("notify.service.fall.discord.webhook")
 public class NotifyServiceFallDiscordWebhookConfig {
-    private String urlTemplate;
-    private String id;
-    private String token;
+    private URI url;
     private String messageTemplate;
-
-    public URI createUrl() {
-        if(urlTemplate == null || urlTemplate.isBlank() || id == null || id.isBlank() || token == null || token.isBlank()){
-            return null;
-        }
-        return URI.create(urlTemplate.replaceAll("\\{webhook.id}", id)
-                .replaceAll("\\{webhook.token}", token));
-    }
 
     public String createMessage(ServiceEvent event) {
         if(event != null && messageTemplate != null && !messageTemplate.isBlank()) {
@@ -36,9 +24,7 @@ public class NotifyServiceFallDiscordWebhookConfig {
         return null;
     }
 
-    public Map<String, Object> createFormParam(String message) {
-        var formParam = new HashMap<String, Object>();
-        formParam.put("content", message);
-        return formParam;
+    public DiscordWebhookMessage createDiscordWebhookMessage(String message) {
+        return new DiscordWebhookMessage(null, null, message);
     }
 }
