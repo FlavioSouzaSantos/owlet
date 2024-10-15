@@ -34,11 +34,17 @@ public class NotifyServiceFallDiscordWebhookConfigPropertyTest {
     void shouldLoadConfigs(){
         var properties = new Properties();
         properties.setProperty("notify.service.fall.discord.webhook.url", "localhost");
+        properties.setProperty("notify.service.fall.discord.webhook.username", "owlet");
+        properties.setProperty("notify.service.fall.discord.webhook.avatarUrl", "localhost/owlet.png");
         properties.setProperty("notify.service.fall.discord.webhook.messageTemplate", "Service is fall.");
+        properties.setProperty("notify.service.fall.discord.webhook.dateTimePattern", "dd/MM/yyyy hh:mm:ss");
 
         var notifyServiceFallDiscordWebhookConfig = configService.loadConfigNotifyServiceFallProperties(properties);
         assertEquals(notifyServiceFallDiscordWebhookConfig.getUrl(), URI.create("localhost"));
+        assertEquals(notifyServiceFallDiscordWebhookConfig.getUsername(), "owlet");
+        assertEquals(notifyServiceFallDiscordWebhookConfig.getUsername(), URI.create("localhost/owlet.png"));
         assertEquals(notifyServiceFallDiscordWebhookConfig.getMessageTemplate(), "Service is fall.");
+        assertEquals(notifyServiceFallDiscordWebhookConfig.getDateTimePattern(), "dd/MM/yyyy hh:mm:ss");
     }
 
     @Test
