@@ -42,7 +42,7 @@ public class NotifyServiceFallDiscordWebhookConfigPropertyTest {
         var notifyServiceFallDiscordWebhookConfig = configService.loadConfigNotifyServiceFallProperties(properties);
         assertEquals(notifyServiceFallDiscordWebhookConfig.getUrl(), URI.create("localhost"));
         assertEquals(notifyServiceFallDiscordWebhookConfig.getUsername(), "owlet");
-        assertEquals(notifyServiceFallDiscordWebhookConfig.getUsername(), URI.create("localhost/owlet.png"));
+        assertEquals(notifyServiceFallDiscordWebhookConfig.getAvatarUrl(), URI.create("localhost/owlet.png"));
         assertEquals(notifyServiceFallDiscordWebhookConfig.getMessageTemplate(), "Service is fall.");
         assertEquals(notifyServiceFallDiscordWebhookConfig.getDateTimePattern(), "dd/MM/yyyy hh:mm:ss");
     }
