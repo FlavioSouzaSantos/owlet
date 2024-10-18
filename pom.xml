@@ -107,6 +107,34 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>run-jlink</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/jlink</executable>
+                            <arguments>
+                                <argument>--add-modules</argument>
+                                <argument>java.base,java.logging,java.net.http,java.security.sasl,jdk.crypto.ec,java.naming</argument>
+
+                                <argument>--output</argument>
+                                <argument>${project.build.directory}/runtime</argument>
+
+                                <argument>--compress</argument>
+                                <argument>zip-6</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
