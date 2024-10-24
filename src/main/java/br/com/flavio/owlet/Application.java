@@ -7,6 +7,8 @@ import br.com.flavio.owlet.services.ConfigService;
 import br.com.flavio.owlet.threads.CheckEndpointThread;
 
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +24,7 @@ public class Application {
             var configService = new ConfigService();
 
             var properties = new Properties();
-            properties.load(new FileInputStream(getConfigFilePath().toFile()));
+            properties.load(new InputStreamReader(new FileInputStream(getConfigFilePath().toFile()), StandardCharsets.UTF_8));
 
             var notifyServicePingConfig = configService.loadConfigNotifyServicePingProperties(properties);
             var notifyServiceFallConfig = configService.loadConfigNotifyServiceFallProperties(properties);
@@ -42,7 +44,7 @@ public class Application {
                 }
 
                 try(var executor = Executors.newVirtualThreadPerTaskExecutor()){
-                    Runtime.getRuntime().addShutdownHook(new Thread(() -> executor.shutdownNow()));
+                    Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdownNow));
 
                     for(Properties configProperties : propertiesList){
                         try{
