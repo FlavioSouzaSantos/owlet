@@ -1,0 +1,16 @@
+[Unit]
+Description=Owlet service to monitoring the applications.
+After=network.target
+
+[Service]
+User=root
+Group=root
+ExecStart=/opt/owlet/startup.sh
+
+StandardOutput=append:/var/log/owlet.log
+StandardError=append:/var/log/owlet_error.log
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
