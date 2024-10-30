@@ -31,3 +31,12 @@ client.service.{n}.maxFailureForCheckIfServiceIsDown    | Number    | The maximu
 client.service.{n}.periodForNewCheckAfterFailure        | Number    | Period in milliseconds for a new health check request after the service is considered down. The default value is 10.000.
 
 Observation : For each service, you need to increment the sequence number in the {n}.
+
+How to install
+--------
+For a native installation on Linux using Systemd. <br/>
+First, we are going to run a Maven command called ```package```. As a result, the file ```owlet.jar``` and ```runtime``` directory will be created in the ```target``` directory. <br/>
+Create the directory called ```owlet``` in ```/opt``` directory using the command ```mkdir /opt/owlet```. Then, copy the files and directory ```owlet.jar```,  ```runtime```  and ```startup.sh``` to ```/opt/owlet``` after that, copy the ```owlet.service``` file to ```/etc/systemd/system``` directory.<br/>
+Once the files and directory have been copied, run the following Systemd commands:<br/>
+```sudo systemctl daemon-reload```</br>
+```sudo systemctl start owlet.service```</br>
