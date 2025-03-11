@@ -36,7 +36,7 @@ public class NotifyFallDiscordWebhookListenerTest {
         clientServiceConfig.setMaxFailureForCheckIfServiceIsDown(1);
 
         var checkEndpointService = new CheckEndpointService(clientServiceConfig);
-        checkEndpointService.setServiceFallListener(notifyFallDiscordWebhookListener);
+        checkEndpointService.addServiceFallListener(notifyFallDiscordWebhookListener);
         checkEndpointService.checkHealth();
         checkEndpointService.checkHealth();
 
@@ -60,7 +60,7 @@ public class NotifyFallDiscordWebhookListenerTest {
         clientServiceConfig.setMaxFailureForCheckIfServiceIsDown(1);
 
         var checkEndpointService = new CheckEndpointService(clientServiceConfig);
-        checkEndpointService.setServiceFallListener(notifyFallDiscordWebhookListener);
+        checkEndpointService.addServiceFallListener(notifyFallDiscordWebhookListener);
         checkEndpointService.checkHealth();
         checkEndpointService.checkHealth();
         checkEndpointService.checkHealth();

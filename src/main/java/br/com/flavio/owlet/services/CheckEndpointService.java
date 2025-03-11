@@ -2,7 +2,9 @@ package br.com.flavio.owlet.services;
 
 import br.com.flavio.owlet.listeners.ServiceFallListener;
 import br.com.flavio.owlet.listeners.ServicePingListener;
-import br.com.flavio.owlet.model.*;
+import br.com.flavio.owlet.model.CheckHealthLog;
+import br.com.flavio.owlet.model.ClientServiceConfig;
+import br.com.flavio.owlet.model.ServiceEvent;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,7 +24,7 @@ public class CheckEndpointService {
     private final List<CheckHealthLog> checkHealthLogs = new ArrayList<>();
     private final ClientServiceConfig clientServiceConfig;
     private final HttpRequest request;
-    private ServiceFallListener serviceFallListener;
+    private final List<ServiceFallListener> servicesFallListeners=new ArrayList<>();
     private ServicePingListener servicePingListener;
     private int countSequenceFail=0;
 
@@ -61,12 +63,22 @@ public class CheckEndpointService {
             countSequenceFail ++;
         }
 
-        if(serviceFallListener != null && countSequenceFail > clientServiceConfig.getMaxFailureForCheckIfServiceIsDown()){
-            serviceFallListener.onFall(new ServiceEvent(clientServiceConfig, LocalDateTime.now()));
+        if(!servicesFallListeners.isEmpty() && countSequenceFail > clientServiceConfig.getMaxFailureForCheckIfServiceIsDown()){
+            for(ServiceFallListener fallListener : servicesFallListeners){
+                try {
+                    fallListener.onFall(new ServiceEvent(clientServiceConfig, LocalDateTime.now()));
+                } catch (Exception ex){
+                    Logger.getGlobal().log(Level.SEVERE, ex.getMessage());
+                }
+            }
             countSequenceFail = 0;
         }
         if(servicePingListener != null && result){
-            servicePingListener.onPing(new ServiceEvent(clientServiceConfig, LocalDateTime.now()));
+            try {
+                servicePingListener.onPing(new ServiceEvent(clientServiceConfig, LocalDateTime.now()));
+            } catch (Exception ex){
+                Logger.getGlobal().log(Level.SEVERE, ex.getMessage());
+            }
         }
         return result;
     }
@@ -92,8 +104,8 @@ public class CheckEndpointService {
         return diff < interval ? Duration.of(interval - diff, MILLIS) : Duration.ZERO;
     }
 
-    public void setServiceFallListener(ServiceFallListener listener) {
-        serviceFallListener = listener;
+    public void addServiceFallListener(ServiceFallListener listener) {
+        servicesFallListeners.add(listener);
     }
 
     public void setServicePingListener(ServicePingListener listener) {

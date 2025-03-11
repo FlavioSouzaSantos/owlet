@@ -19,4 +19,5 @@ public class ClientServiceConfig {
     private long timeoutConnectionInMilliseconds = 10_000;
     private int maxFailureForCheckIfServiceIsDown = 2;
     private long periodForNewCheckAfterFailure = 10_000;
+    private String commandWillRunWhenServiceIsDown;
 }

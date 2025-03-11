@@ -1,6 +1,7 @@
 package br.com.flavio.owlet;
 
 import br.com.flavio.owlet.exceptions.ConfigException;
+import br.com.flavio.owlet.listeners.ExecuteFallCommandListener;
 import br.com.flavio.owlet.listeners.NotifyFallDiscordWebhookListener;
 import br.com.flavio.owlet.listeners.NotifyPingServiceListener;
 import br.com.flavio.owlet.services.ConfigService;
@@ -12,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -51,7 +54,10 @@ public class Application {
                             var config = configService.loadClientServiceConfigProperties(configProperties);
                             configService.checkRequiredFields(config);
 
-                            executor.submit(new CheckEndpointThread(config, notifyPingListener, notifyFallDiscordWebhookListener));
+                            executor.submit(new CheckEndpointThread(config, notifyPingListener,
+                                    config.getCommandWillRunWhenServiceIsDown() == null || config.getCommandWillRunWhenServiceIsDown().isBlank()
+                                            ? Collections.singletonList(notifyFallDiscordWebhookListener)
+                                            : Arrays.asList(notifyFallDiscordWebhookListener, new ExecuteFallCommandListener(config.getCommandWillRunWhenServiceIsDown()))));
                         }catch (ConfigException ex) {
                             Logger.getGlobal().log(Level.WARNING, ex.getMessage(), ex);
                         }

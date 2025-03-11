@@ -5,6 +5,7 @@ import br.com.flavio.owlet.listeners.ServicePingListener;
 import br.com.flavio.owlet.model.ClientServiceConfig;
 import br.com.flavio.owlet.services.CheckEndpointService;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,13 +13,15 @@ public class CheckEndpointThread implements Runnable {
 
     private final CheckEndpointService service;
 
-    public CheckEndpointThread(ClientServiceConfig clientServiceConfig, ServicePingListener servicePingListener, ServiceFallListener serviceFallListener) {
+    public CheckEndpointThread(ClientServiceConfig clientServiceConfig,
+                               ServicePingListener servicePingListener,
+                               List<ServiceFallListener> servicesFallListeners) {
         if(clientServiceConfig != null){
             service = new CheckEndpointService(clientServiceConfig);
             if(servicePingListener != null)
                 service.setServicePingListener(servicePingListener);
-            if(serviceFallListener != null)
-                service.setServiceFallListener(serviceFallListener);
+            if(servicesFallListeners != null)
+                servicesFallListeners.forEach(service::addServiceFallListener);
         } else {
             service = null;
         }

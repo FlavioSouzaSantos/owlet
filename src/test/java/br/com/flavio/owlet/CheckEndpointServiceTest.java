@@ -123,7 +123,7 @@ public class CheckEndpointServiceTest {
 
         var eventList = new ArrayList<ServiceEvent>();
         var checkEndpointService = new CheckEndpointService(serviceConfig);
-        checkEndpointService.setServiceFallListener((event) -> eventList.add(event));
+        checkEndpointService.addServiceFallListener(eventList::add);
 
         checkEndpointService.checkHealth();
         checkEndpointService.checkHealth();
@@ -144,7 +144,7 @@ public class CheckEndpointServiceTest {
 
         var eventList = new ArrayList<ServiceEvent>();
         var checkEndpointService = new CheckEndpointService(serviceConfig);
-        checkEndpointService.setServicePingListener((event) -> eventList.add(event));
+        checkEndpointService.setServicePingListener(eventList::add);
 
         checkEndpointService.checkHealth();
         checkEndpointService.checkHealth();
