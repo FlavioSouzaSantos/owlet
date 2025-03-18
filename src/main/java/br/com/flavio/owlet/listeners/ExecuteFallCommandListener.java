@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ExecuteFallCommandListener implements ServiceFallListener {
     private final String command;
@@ -24,11 +25,17 @@ public class ExecuteFallCommandListener implements ServiceFallListener {
 
                 var process = builder.start();
 
-                new BufferedReader(new InputStreamReader(process.getErrorStream()))
-                        .lines().forEach(System.err::println);
+                var linesError = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+                        .lines().collect(Collectors.joining("\n"));
+                if(!linesError.isBlank()){
+                    Logger.getGlobal().log(Level.SEVERE, linesError);
+                }
 
-                new BufferedReader(new InputStreamReader(process.getInputStream()))
-                        .lines().forEach(System.out::println);
+                var linesSuccess = new BufferedReader(new InputStreamReader(process.getInputStream()))
+                        .lines().collect(Collectors.joining("\n"));
+                if(!linesSuccess.isBlank()){
+                    Logger.getGlobal().log(Level.INFO, linesSuccess);
+                }
 
                 int exitCode = process.waitFor();
                 Logger.getGlobal().log(Level.INFO,
